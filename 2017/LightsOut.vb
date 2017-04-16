@@ -1,7 +1,7 @@
 Option Strict On
 Option Explicit On
 Public Class Form1
-    ' The board is square so this should be a perfect square number. (it will be rounded down to the nearest perfect square
+    ' The board is square so this should be a perfect square number. (it will be rounded down to the nearest perfect square)
     Const sizeOfBoard As Integer = 25
     Dim sizeOfBoardEdge As Integer = CInt(Math.Floor(Math.Sqrt(sizeOfBoard)))
 
@@ -45,10 +45,10 @@ Public Class Form1
 
         ' Leave everything below this line alone
         ' ============================================================================================================
-        RedrawBoard() ' Now that you have update boardArray we have to redraw the board
+        RedrawBoard() ' Now that you have updated boardArray we have to redraw the board
     End Sub
 
-    ' You don't need to look at this function. Just call RedrawBoard(boardArray) when you want to update the display
+    ' You don't need to look at this function. Just call RedrawBoard() when you need to update the display
     Sub RedrawBoard()
         Me.Size = New Size(sizeOfBoardEdge * 66, sizeOfBoardEdge * 66)
         Me.ClientSize = New Size(sizeOfBoardEdge * 66, sizeOfBoardEdge * 66)
