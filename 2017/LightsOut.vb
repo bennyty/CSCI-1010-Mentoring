@@ -17,7 +17,7 @@ Public Class Form1
         Me.Text = "Lights Out!"
         ' If you want to setup the board (maybe randomize it?) you can do that here
         ' PART 1: Write a loop that makes all the lights start ON (Right now they start off because Booleans are false by default)
-        '         and start with 10 clicks remaining
+        '         and start with 5 clicks remaining
 
         RedrawBoard() ' This will draw the board for the first time
     End Sub
