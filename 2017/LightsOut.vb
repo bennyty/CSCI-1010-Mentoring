@@ -17,7 +17,7 @@ Public Class Form1
         Me.Text = "Lights Out!"
         ' If you want to setup the board (maybe randomize it?) you can do that here
         ' PART 1: Write a loop that makes all the lights start ON (Right now they start off because Booleans are false by default)
-        '         and start with 5 clicks remaining
+        '         and start with 10 clicks remaining
 
         RedrawBoard() ' This will draw the board for the first time
     End Sub
@@ -35,7 +35,7 @@ Public Class Form1
 
         ' PART 1: When you add your custom structure edit the line below to use boolLightOn
         boardArray(intButtonID) = Not boardArray(intButtonID) ' This updates boardArray to change the button you clicked
-        ' PART 1: When you click a button, you should subtract 1 from the clicks remaining.
+        ' PART 2: When you click a button, you should subtract 1 from the clicks remaining.
 
         ' PART 2: When you click a button it should toggle the buttons adjacent to it in a cross shape
 
@@ -138,7 +138,7 @@ Public Class Form1
         End If
     End Sub
 
-    ' Thank you Devansh for this excellnt disco code
+    ' Thank you Lucien for this excellent disco code
     Sub DiscoParty(btns() As Button)
         While (True)
             For Each btn In btns
@@ -147,12 +147,12 @@ Public Class Form1
             Threading.Thread.Sleep(200)
         End While
     End Sub
-    ' Thank you Devansh for this excellnt disco code
+    ' Thank you Lucien for this excellent disco code
     Function getRandomColor() As Color
         Return Color.FromArgb(getRandomColorChannel(), getRandomColorChannel(), getRandomColorChannel())
     End Function
 
-    ' Thank you Devansh for this excellnt disco code
+    ' Thank you Lucien for this excellent disco code
     ' Generate Random number in range 0 ... 255
     ' https://msdn.microsoft.com/en-us/library/f7s023d2(v=vs.90).aspx
     Function getRandomColorChannel() As Integer
