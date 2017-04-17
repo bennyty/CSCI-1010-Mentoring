@@ -5,19 +5,28 @@ Public Class Form1
     Const sizeOfBoard As Integer = 25
     Dim sizeOfBoardEdge As Integer = CInt(Math.Floor(Math.Sqrt(sizeOfBoard)))
 
+	' Hey team. This code has been worked on a lot to make the game look pretty good already, you just need to extend the functionality
+	' Please read through the code here up till the warning line. Then follow the steps in order 1,2,3.
 
-    ' PART 1: Make a custom structure with two variables inside. A Boolean named boolLightOn and an Integer named intClicksRemaining
+
+    ' STEP 2: Make a custom structure with two variables inside. A Boolean named boolLightOn and an Integer named intClicksRemaining
     ' Put your structure declaration here ↓
 
     ' Put your structure declaration here ↑
-    ' When you make your custom structure, change the type of this array. It should end with:    As YourStructureName
+    ' When you make your custom structure, change the type of this array to be an array of your structures instead of an array of booleans
     Private boardArray(sizeOfBoard - 1) As Boolean
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.Text = "Lights Out!"
         ' If you want to setup the board (maybe randomize it?) you can do that here
-        ' PART 1: Write a loop that makes all the lights start ON (Right now they start off because Booleans are false by default)
-        '         and start with 5 clicks remaining
+
+		' STEP 1: Right now, when you start the game you will instantly win!
+		' Right now all the lights start off because Booleans are false by
+		' default. Write a loop that makes all the lights start ON
+
+		' STEP 2: When you start the game after adding you custom structure,
+		' you will instantly lose! The game tells you that you ran out of
+		' moves. Modify your loop so that you start with 5 clicks remaining
 
         RedrawBoard() ' This will draw the board for the first time
     End Sub
@@ -33,13 +42,18 @@ Public Class Form1
         ' ============================================================================================================
         ' Your code goes here in this area
 
-        ' PART 1: When you add your custom structure edit the line below to use boolLightOn
+		' STEP 2: When you add your custom structure, boardArray is now not an
+		' array of booleans, now its an array of structures that CONTAIN a
+		' boolean. Edit the line below to use boolLightOn instead.
         boardArray(intButtonID) = Not boardArray(intButtonID) ' This updates boardArray to change the button you clicked
-        ' PART 2: When you click a button, you should subtract 1 from the clicks remaining.
+        ' STEP 3: When you click a button, you should also subtract 1 from the clicks remaining, just on that button.
 
-        ' PART 2: When you click a button it should toggle the buttons adjacent to it in a cross shape
+		' STEP 3: When you click a button it should toggle the buttons adjacent
+		' to it in a cross shape please add code that will toggle the buttons
+		' adjacent to the clicked button. There are some variables created for
+		' you that might help. Make sure you check the edge cases.
 
-        ' You can delete this when you understand what is going on
+        ' You can delete this when you understand what is going on (its kind of annoying)
         MessageBox.Show("You clicked button number: " + Convert.ToString(intButtonID) +
                         " Coordinate: (" + Convert.ToString(intRowCoordinate) + ", " + Convert.ToString(intColumnCoordinate) + ")")
 
@@ -47,6 +61,21 @@ Public Class Form1
         ' ============================================================================================================
         RedrawBoard() ' Now that you have updated boardArray we have to redraw the board
     End Sub
+
+
+
+'   Only confusion and misery await you below
+'   ==================================================================================================================
+'                      __      ___   ___ _  _ ___ _  _  ___   ___   ___    _  _  ___ _____
+'                      \ \    / /_\ | _ \ \| |_ _| \| |/ __| |   \ / _ \  | \| |/ _ \_   _|
+'                       \ \/\/ / _ \|   / .` || || .` | (_ | | |) | (_) | | .` | (_) || |
+'                        \_/\_/_/ \_\_|_\_|\_|___|_|\_|\___| |___/ \___/  |_|\_|\___/ |_|
+'                         ___ ___  ___  ___ ___   _____ _  _ ___ ___   _    ___ _  _ ___
+'                        / __| _ \/ _ \/ __/ __| |_   _| || |_ _/ __| | |  |_ _| \| | __|
+'                       | (__|   / (_) \__ \__ \   | | | __ || |\__ \ | |__ | || .` | _|
+'                        \___|_|_\\___/|___/___/   |_| |_||_|___|___/ |____|___|_|\_|___|
+'   ==================================================================================================================
+
 
     ' You don't need to look at this function. Just call RedrawBoard() when you need to update the display
     Sub RedrawBoard()
@@ -70,15 +99,15 @@ Public Class Form1
             Btns(i).Anchor = AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right Or AnchorStyles.Top
             If Not type.IsValueType And Not type.IsPrimitive And Not type.Namespace.StartsWith("System") And Not type.IsEnum Then
                 ' This is for boardArray As Tile
-                Console.WriteLine("Struct: " + (i).ToString)
+                Console.WriteLine("Struct: " + i.ToString)
                 Dim item = boardArray(i)
                 Try
                     Dim clicksRemaining = CInt(CallByName(item, "intClicksRemaining", CallType.Get, Nothing))
-                    Btns(i).Text = (clicksRemaining).ToString
+                    Btns(i).Text = clicksRemaining.ToString
                     scoreList.Add(clicksRemaining)
-                    Console.WriteLine("    intClicksRemaining: " + (clicksRemaining).ToString)
+                    Console.WriteLine("    intClicksRemaining: " + clicksRemaining.ToString)
                 Catch ex As MissingMemberException
-                    MessageBox.Show("Your custom struct did not contain a Integer named intClicksRemaining. Array index: " + (i).ToString, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop)
+                    MessageBox.Show("Your custom struct did not contain a Integer named intClicksRemaining. Array index: " + i.ToString, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop)
                     End
                 End Try
                 Try
@@ -87,9 +116,9 @@ Public Class Form1
                     stateList.Add(enabled)
                     Btns(i).ForeColor = If(enabled, Color.Black, Color.White)
                     Btns(i).BackColor = If(enabled, Color.White, Color.Black)
-                    Console.WriteLine("    boolLightOn: " + (enabled).ToString)
+                    Console.WriteLine("    boolLightOn: " + enabled.ToString)
                 Catch ex As MissingMemberException
-                    MessageBox.Show("Your custom struct did not contain a Boolean named boolLightOn. Array index: " + (i).ToString, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop)
+                    MessageBox.Show("Your custom struct did not contain a Boolean named boolLightOn. Array index: " + i.ToString, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop)
                     End
                 End Try
             Else
