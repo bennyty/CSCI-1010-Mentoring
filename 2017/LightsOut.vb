@@ -84,8 +84,8 @@ Public Class Form1
         Dim Btns(sizeOfBoardEdge * sizeOfBoardEdge - 1) As Button
         Dim table As TableLayoutPanel = New TableLayoutPanel
         Dim type = boardArray.GetType()
-        Dim stateList As List(Of Boolean) = New List(Of Boolean)
-        Dim scoreList As List(Of Integer) = New List(Of Integer)
+        Dim stateList = boardArray.Select((Function(x) x.boolLightOn))
+        Dim scoreList = boardArray.Select((Function(x) x.intClicksRemaining))
         Console.WriteLine("Type was: " + type.ToString)
         Console.WriteLine(type.IsValueType)
         Console.WriteLine(type.IsPrimitive)
@@ -104,7 +104,6 @@ Public Class Form1
                 Try
                     Dim clicksRemaining = CInt(CallByName(item, "intClicksRemaining", CallType.Get, Nothing))
                     Btns(i).Text = clicksRemaining.ToString
-                    scoreList.Add(clicksRemaining)
                     Console.WriteLine("    intClicksRemaining: " + clicksRemaining.ToString)
                 Catch ex As MissingMemberException
                     MessageBox.Show("Your custom struct did not contain a Integer named intClicksRemaining. Array index: " + i.ToString, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop)
@@ -113,7 +112,6 @@ Public Class Form1
                 Try
                     Dim lightOn = CallByName(item, "boolLightOn", CallType.Get, Nothing)
                     Dim enabled = CBool(lightOn)
-                    stateList.Add(enabled)
                     Btns(i).ForeColor = If(enabled, Color.Black, Color.White)
                     Btns(i).BackColor = If(enabled, Color.White, Color.Black)
                     Console.WriteLine("    boolLightOn: " + enabled.ToString)
@@ -124,8 +122,6 @@ Public Class Form1
             Else
                 ' This is for boardArray As Boolean
                 Dim enabled = CBool(CObj(boardArray(i)))
-                stateList.Add(enabled)
-                scoreList.Add(-1)
                 Btns(i).BackColor = If(enabled, Color.White, Color.Black)
             End If
             Btns(i).Tag = i
@@ -137,13 +133,7 @@ Public Class Form1
         Me.Controls.Add(table)
 
         Dim wonTheGame As Boolean = Not stateList.Contains(True)
-        Dim lostTheGame As Boolean = True
-        For Each x In scoreList
-            If x <> 0 Then
-                lostTheGame = False
-                Exit For
-            End If
-        Next
+        Dim lostTheGame As Boolean = scoreList.All(Function(x) x = 0)
 
         If lostTheGame Then
             For Each btn In Btns
@@ -153,14 +143,9 @@ Public Class Form1
             End
         End If
         If wonTheGame Then
-            Dim score = 0
+            Dim score = scoreList.Sum()
             For Each btn In Btns
                 btn.Enabled = False
-                Try
-                    Dim clicksRemaining = CInt(btn.Text)
-                    score += clicksRemaining
-                Catch ex As Exception
-                End Try
             Next
             MessageBox.Show("WINNER: Your score was: " + score.ToString, "You won", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
             Task.Run(Sub() DiscoParty(Btns))
