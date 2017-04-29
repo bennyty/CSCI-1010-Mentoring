@@ -76,23 +76,18 @@ Public Class Form1
 '                        \___|_|_\\___/|___/___/   |_| |_||_|___|___/ |____|___|_|\_|___|
 '   ==================================================================================================================
 
-
-    ' You don't need to look at this function. Just call RedrawBoard() when you need to update the display
-    Sub RedrawBoard()
+    Dim Btns(sizeOfBoardEdge * sizeOfBoardEdge - 1) As Button
+    Sub SetupBoard()
         Me.Size = New Size(sizeOfBoardEdge * 66, sizeOfBoardEdge * 66)
         Me.ClientSize = New Size(sizeOfBoardEdge * 66, sizeOfBoardEdge * 66)
-        Dim Btns(sizeOfBoardEdge * sizeOfBoardEdge - 1) As Button
         Dim table As TableLayoutPanel = New TableLayoutPanel
         Dim type = boardArray.GetType()
-        Dim stateList = boardArray.Select((Function(x) x.boolLightOn))
-        Dim scoreList = boardArray.Select((Function(x) x.intClicksRemaining))
+        table.Size = Me.ClientSize
         Console.WriteLine("Type was: " + type.ToString)
         Console.WriteLine(type.IsValueType)
         Console.WriteLine(type.IsPrimitive)
         Console.WriteLine(type.Namespace.StartsWith("System"))
         Console.WriteLine(type.IsEnum)
-        table.Size = Me.ClientSize
-
 
         For i As Integer = 0 To Btns.Length - 1
             Btns(i) = New Button
@@ -110,10 +105,9 @@ Public Class Form1
                     End
                 End Try
                 Try
-                    Dim lightOn = CallByName(item, "boolLightOn", CallType.Get, Nothing)
-                    Dim enabled = CBool(lightOn)
-                    Btns(i).ForeColor = If(enabled, Color.Black, Color.White)
-                    Btns(i).BackColor = If(enabled, Color.White, Color.Black)
+                    Dim lightOn = CBool(CallByName(item, "boolLightOn", CallType.Get, Nothing))
+                    Btns(i).ForeColor = If(lightOn, Color.Black, Color.White)
+                    Btns(i).BackColor = If(lightOn, Color.White, Color.Black)
                     Console.WriteLine("    boolLightOn: " + enabled.ToString)
                 Catch ex As MissingMemberException
                     MessageBox.Show("Your custom struct did not contain a Boolean named boolLightOn. Array index: " + i.ToString, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop)
@@ -131,9 +125,52 @@ Public Class Form1
         Next
         Me.Controls.Clear()
         Me.Controls.Add(table)
+        RedrawBoard() ' After setup draw the board once
+    End Sub
 
-        Dim wonTheGame As Boolean = Not stateList.Contains(True)
-        Dim lostTheGame As Boolean = scoreList.All(Function(x) x = 0)
+    ' You don't need to look at this function. Just call RedrawBoard() when you need to update the display
+    Sub RedrawBoard()
+        Dim stateList As IEnumerable(Of Boolean)
+        Dim scoreList As IEnumerable(Of Integer)
+        Dim type = boardArray.GetType()
+        Dim wonTheGame As Boolean = False
+        Dim lostTheGame As Boolean = False
+        Dim score = 0
+
+        If Not type.IsValueType And Not type.IsPrimitive And Not type.Namespace.StartsWith("System") And Not type.IsEnum Then
+            ' This is for boardArray As Tile
+            For i As Integer = 0 To Btns.Length - 1
+                Dim item = boardArray(i)
+                Try
+                    Dim clicksRemaining = CInt(CallByName(item, "intClicksRemaining", CallType.Get, Nothing))
+                    Btns(i).Text = clicksRemaining.ToString
+                Catch ex As MissingMemberException
+                    MessageBox.Show("Your custom struct did not contain a Integer named intClicksRemaining. Array index: " + i.ToString, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop)
+                    End
+                End Try
+                Try
+                    Dim lightOn = CBool(CallByName(item, "boolLightOn", CallType.Get, Nothing))
+                    Btns(i).ForeColor = If(lightOn, Color.Black, Color.White)
+                    Btns(i).BackColor = If(lightOn, Color.White, Color.Black)
+                Catch ex As MissingMemberException
+                    MessageBox.Show("Your custom struct did not contain a Boolean named boolLightOn. Array index: " + i.ToString, "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop)
+                    End
+                End Try
+            Next
+            stateList = boardArray.Select((Function(x) CBool(CallByName(x, "boolLightOn", CallType.Get, Nothing))))
+            scoreList = boardArray.Select((Function(x) CInt(CallByName(x, "intClicksRemaining", CallType.Get, Nothing))))
+            lostTheGame = scoreList.All(Function(x) x = 0)
+            score = scoreList.Sum()
+        Else
+            For i As Integer = 0 To Btns.Length - 1
+                ' This is for boardArray As Boolean
+                Dim enabled = CBool(CObj(boardArray(i)))
+                Btns(i).BackColor = If(enabled, Color.White, Color.Black)
+            Next
+            stateList = CType(boardArray, IEnumerable(Of Boolean))
+        End If
+
+        wonTheGame = Not stateList.Contains(True)
 
         If lostTheGame Then
             For Each btn In Btns
@@ -143,7 +180,6 @@ Public Class Form1
             End
         End If
         If wonTheGame Then
-            Dim score = scoreList.Sum()
             For Each btn In Btns
                 btn.Enabled = False
             Next
@@ -153,7 +189,7 @@ Public Class Form1
     End Sub
 
     ' Thank you Lucien for this excellent disco code
-    Sub DiscoParty(btns() As Button)
+    Sub DiscoParty(btns As IEnumerable(Of Button))
         While (True)
             For Each btn In btns
                 btn.BackColor = getRandomColor()
