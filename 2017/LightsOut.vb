@@ -157,7 +157,7 @@ Public Class Form1
             For Each btn In Btns
                 btn.Enabled = False
                 Try
-                    Dim clicksRemaining = CInt(CallByName(btn, "intClicksRemaining", CallType.Get, Nothing))
+                    Dim clicksRemaining = CInt(btn.Text)
                     score += clicksRemaining
                 Catch ex As Exception
                 End Try
