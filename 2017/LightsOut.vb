@@ -59,7 +59,7 @@ Public Class Form1
 
         ' Leave everything below this line alone
         ' ============================================================================================================
-        RedrawBoard() ' Now that you have updated boardArray we have to redraw the board
+        SetupBoard() ' Now that you have updated boardArray we have to redraw the board
     End Sub
 
 
