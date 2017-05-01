@@ -28,7 +28,7 @@ Public Class Form1
 		' you will instantly lose! The game tells you that you ran out of
 		' moves. Modify your loop so that you start with 5 clicks remaining
 
-        RedrawBoard() ' This will draw the board for the first time
+        SetupBoard() ' This will draw the board for the first time
     End Sub
 
     Public Sub ButtonGotClicked(ByVal sender As Object, ByVal e As System.EventArgs)
@@ -59,7 +59,7 @@ Public Class Form1
 
         ' Leave everything below this line alone
         ' ============================================================================================================
-        SetupBoard() ' Now that you have updated boardArray we have to redraw the board
+        RedrawBoard() ' Now that you have updated boardArray we have to redraw the board
     End Sub
 
 
